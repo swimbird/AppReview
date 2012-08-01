@@ -1,0 +1,1 @@
+CREATE TABLE `reviews` (`id` integer PRIMARY KEY AUTOINCREMENT, `hash` string, `user` string, `date` string, `title` string, `body` string, `version` string, `device` string, `app_id` string, `nodes` string, `star` int, `created_at` timestamp)
