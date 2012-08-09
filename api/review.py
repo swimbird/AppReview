@@ -36,6 +36,10 @@ class MethodRewriteMiddleware(object):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+@app.route('/crossdomain.xml')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'crossdomain.xml', mimetype='text/xml')
 
 def connect_db():
     return sqlite3.connect(__database)
@@ -56,16 +60,20 @@ def teardown_request(exception):
         g.db.close()
 
 @app.after_request
-def add_header(response):
-    pprint(response)
-    response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = '*'
+def per_request_callbacks(response):
+    for func in getattr(g, 'call_after_request', ()):
+        response = func(response)
     return response
 
-@app.errorhandler(404)
-def page_not_found(error):
-    return jsonify({'status':'error'}), 404
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({'status':'error'}), 400
 
+def after_this_request(func):
+    if not hasattr(g, 'call_after_request'):
+        g.call_after_request = []
+    g.call_after_request.append(func)
+    return func
 
 @app.route('/review/<id>')
 @app.route('/review/<id>?limit=<limit>&offset=<offset>&star=<star>')
@@ -79,13 +87,18 @@ def show_review(id):
         if is_id(id):
             reviews = select_review(id, limit, offset, star)
         else:
-            abort(404)
+            abort(400)
     else:
-        abort(404)
+        abort(400)
 
+    @after_this_request
+    def add_json_header(response):
+        print response
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
     return json.dumps(reviews, ensure_ascii=False)
     #return jsonify(reviews)
-
 
 def is_id(id):
     app_id = query_db('select * from reviews where app_id=?',
