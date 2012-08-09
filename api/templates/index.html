@@ -1,0 +1,15 @@
+<html><body>
+<form method="POST" action="{{ url_for("add_user")}}">
+<div>name：<input type="text" name="name"></div>
+<input type="submit" value="send">
+</form>
+aaaaaaaaaaaaaaaa
+{% if items %}
+<ul>
+{% for i in items %}
+<li> {{ i }} </li>
+{% endfor%}
+</ul>
+{% endif %}
+
+</body></html>
