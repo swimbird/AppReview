@@ -35,7 +35,7 @@ class GooglePlayReview(ReviewDB.ReviewDB):
         bodies = []
         bodytags = root.xpath("//div[@class='doc-review']")
         for tag in bodytags:
-            html = lxml.html.tostring(tag, encoding='utf_8')
+            html = lxml.html.tostring(tag, encoding='utf-8')
             bodies.append(self.get_body(html))
 
 
@@ -56,7 +56,7 @@ class GooglePlayReview(ReviewDB.ReviewDB):
         users = []
         usertags = root.xpath("//div[@class='doc-review']")
         for tag in usertags:
-            html = lxml.html.tostring(tag, encoding='utf_8')
+            html = lxml.html.tostring(tag, encoding='utf-8')
             users.append(self.get_user(html))
             #print tag.text.encode('utf_8')
 
@@ -64,7 +64,7 @@ class GooglePlayReview(ReviewDB.ReviewDB):
         devices = []
         versiontags = root.xpath("//div[@class='doc-review']")
         for tag in versiontags:
-            html = lxml.html.tostring(tag, encoding='utf_8')
+            html = lxml.html.tostring(tag, encoding='utf-8')
             versions.append(self.get_version(html))
             devices.append(self.get_device(html))
 
