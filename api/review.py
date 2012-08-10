@@ -93,7 +93,7 @@ def show_review(id):
 
     @after_this_request
     def add_json_header(response):
-        print response
+        #print response
         response.headers['Content-Type'] = 'application/json'
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
@@ -114,15 +114,16 @@ def select_review(id, limit, offset, star):
     reviews["appid"]  = id
     reviews["limit"]  = limit
     reviews["offset"] = offset
+    reviews["star"]   = star
     reviews["status"] = 'ok'
     reviews["review"] = []
 
     if star:
         sql =  'select * from reviews where app_id=? and star=? order by date desc limit ?, ?'
-        bind = ["com.rovio.angrybirds", star, offset, limit]
+        bind = [id, star, offset, limit]
     else:
         sql = 'select * from reviews where app_id=? order by date desc limit ?, ?'
-        bind = ["com.rovio.angrybirds", offset, limit]
+        bind = [id, offset, limit]
 
     for review in query_db(sql, bind):
         #print review
